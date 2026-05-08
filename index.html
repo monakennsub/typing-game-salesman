@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>タイピングゲーム - 昇進への道</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- ローディング画面 -->
+    <div id="loadingScreen" class="screen active">
+        <div class="loading-container">
+            <h1>タイピングゲーム</h1>
+            <p>昇進への道</p>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+            <p class="loading-text">読み込み中...</p>
+        </div>
+    </div>
+
+    <!-- メイン画面 -->
+    <div id="mainScreen" class="screen">
+        <div class="main-container">
+            <div class="title-section">
+                <h1>タイピングゲーム</h1>
+                <h2>昇進への道 〜サラリーマンから社長へ〜</h2>
+            </div>
+
+            <div class="story-section">
+                <p>あなたは平凡なサラリーマン。</p>
+                <p>タイピングスキルで出世を目指し、やがて社長になる。</p>
+                <p>そして業界トップの田谷企業との競争に挑む！</p>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-large" onclick="gameManager.startStageSelect()">ゲーム開始</button>
+                <button class="btn btn-medium" onclick="gameManager.showSettings()">設定</button>
+                <button class="btn btn-medium" onclick="gameManager.showAbout()">説明</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ステージ選択画面 -->
+    <div id="stageSelectScreen" class="screen">
+        <div class="stage-select-container">
+            <h1>ステージを選択</h1>
+            <p class="current-status" id="currentStatus"></p>
+
+            <div class="stage-section">
+                <h2>第1幕：自社での昇進（ステージ 1-10）</h2>
+                <div class="stage-buttons">
+                    <button class="stage-btn" onclick="gameManager.startStage(1)">Stage 1</button>
+                    <button class="stage-btn" onclick="gameManager.startStage(2)">Stage 2</button>
+                    <button class="stage-btn" onclick="gameManager.startStage(3)">Stage 3</button>
+                    <button class="stage-btn" onclick="gameManager.startStage(4)">Stage 4</button>
+                    <button class="stage-btn" onclick="gameManager.startStage(5)">Stage 5</button>
+                    <button class="stage-btn" onclick="gameManager.startStage(6)">Stage 6</button>
+                    <button class="stage-btn" onclick="gameManager.startStage(7)">Stage 7</button>
+                    <button class="stage-btn" onclick="gameManager.startStage(8)">Stage 8</button>
+                    <button class="stage-btn" onclick="gameManager.startStage(9)">Stage 9</button>
+                    <button class="stage-btn" onclick="gameManager.startStage(10)">Stage 10</button>
+                </div>
+            </div>
+
+            <div class="stage-section">
+                <h2>第2幕：田谷との競争（ステージ 11-20）</h2>
+                <div class="stage-buttons">
+                    <button class="stage-btn" onclick="gameManager.startStage(11)">Stage 11</button>
+                    <button class="stage-btn" onclick="gameManager.startStage(12)">Stage 12</button>
+                    <button class="stage-btn" onclick="gameManager.startStage(13)">Stage 13</button>
+                    <button class="stage-btn" onclick="gameManager.startStage(14)">Stage 14</button>
+                    <button class="stage-btn" onclick="gameManager.startStage(15)">Stage 15</button>
+                    <button class="stage-btn" onclick="gameManager.startStage(16)">Stage 16</button>
+                    <button class="stage-btn" onclick="gameManager.startStage(17)">Stage 17</button>
+                    <button class="stage-btn" onclick="gameManager.startStage(18)">Stage 18</button>
+                    <button class="stage-btn" onclick="gameManager.startStage(19)">Stage 19</button>
+                    <button class="stage-btn final" onclick="gameManager.startStage(20)">Stage 20 - 最終決戦</button>
+                </div>
+            </div>
+
+            <button class="btn btn-back" onclick="gameManager.backToMain()">戻る</button>
+        </div>
+    </div>
+
+    <!-- ゲーム画面 -->
+    <div id="gameScreen" class="screen">
+        <div class="game-container">
+            <!-- ヘッダー -->
+            <div class="game-header">
+                <div class="header-left">
+                    <div class="stage-info">
+                        <span id="stageNumber">Stage 1</span>
+                        <span id="enemyName" class="enemy-name"></span>
+                    </div>
+                </div>
+                <div class="header-middle">
+                    <div class="player-status">
+                        <div class="status-item">
+                            <label>給料:</label>
+                            <span id="playerSalary">¥200,000</span>
+                        </div>
+                        <div class="status-item">
+                            <label>役職:</label>
+                            <span id="playerTitle">新入社員</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button class="btn-small" onclick="gameManager.backToStageSelect()">ステージ選択</button>
+                    <button class="btn-small" onclick="gameManager.backToMain()">メニュー</button>
+                </div>
+            </div>
+
+            <!-- ゲームエリア -->
+            <div class="game-area">
+                <!-- 敵キャラクター -->
+                <div class="enemy-section">
+                    <div class="enemy-card">
+                        <div class="enemy-image" id="enemyImage"></div>
+                        <div class="enemy-info">
+                            <h3 id="enemyTitle"></h3>
+                            <p id="enemyDescription"></p>
+                            <div class="hp-bar">
+                                <div class="hp-fill" id="enemyHPBar"></div>
+                            </div>
+                            <p class="hp-text"><span id="currentHP">0</span> / <span id="maxHP">0</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- プレイヤーステータス -->
+                <div class="player-section">
+                    <div class="typing-stats">
+                        <div class="stat-item">
+                            <label>正確な入力数:</label>
+                            <span id="accurateCount">0</span> / <span id="targetCount">270</span>
+                        </div>
+                        <div class="stat-item">
+                            <label>タイプ速度:</label>
+                            <span id="typingSpeed">0</span> /分
+                        </div>
+                        <div class="stat-item">
+                            <label>正確性:</label>
+                            <span id="accuracy">0</span>%
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- タイピングエリア -->
+            <div class="typing-area">
+                <div class="typing-section">
+                    <div class="prompt-box">
+                        <p class="prompt-label">敵のセリフ:</p>
+                        <p class="prompt-text" id="promptText"></p>
+                    </div>
+
+                    <div class="input-section">
+                        <input 
+                            type="text" 
+                            id="typingInput" 
+                            class="typing-input"
+                            placeholder="ここに入力してください..."
+                            disabled
+                        >
+                        <div class="typing-guide" id="typingGuide"></div>
+                    </div>
+
+                    <div class="battle-log" id="battleLog"></div>
+                </div>
+            </div>
+
+            <!-- ステータスバー -->
+            <div class="status-bar">
+                <p id="statusMessage">敵が現れました！準備してください...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- クリア画面 -->
+    <div id="clearScreen" class="screen">
+        <div class="clear-container">
+            <div class="clear-content">
+                <h1>ステージクリア！</h1>
+                <div class="clear-animation">🎉</div>
+
+                <div class="clear-results">
+                    <h2 id="clearTitle"></h2>
+                    <div class="result-item">
+                        <label>正確な入力数:</label>
+                        <span id="finalAccurateCount">0</span>
+                    </div>
+                    <div class="result-item">
+                        <label>平均タイプ速度:</label>
+                        <span id="finalTypingSpeed">0</span> /分
+                    </div>
+                    <div class="result-item">
+                        <label>正確性:</label>
+                        <span id="finalAccuracy">0</span>%
+                    </div>
+                </div>
+
+                <div class="promotion-info" id="promotionInfo"></div>
+
+                <div class="clear-buttons">
+                    <button class="btn btn-large" onclick="gameManager.nextStage()">次のステージへ</button>
+                    <button class="btn btn-medium" onclick="gameManager.backToStageSelect()">ステージ選択</button>
+                    <button class="btn btn-medium" onclick="gameManager.backToMain()">メニュー</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ゲームオーバー画面 -->
+    <div id="gameOverScreen" class="screen">
+        <div class="gameover-container">
+            <h1>ゲームオーバー</h1>
+            <p>敵に倒されました...</p>
+            <p id="gameOverMessage"></p>
+
+            <div class="gameover-buttons">
+                <button class="btn btn-large" onclick="gameManager.retryStage()">もう一度挑戦</button>
+                <button class="btn btn-medium" onclick="gameManager.backToStageSelect()">ステージ選択</button>
+                <button class="btn btn-medium" onclick="gameManager.backToMain()">メニュー</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 設定画面 -->
+    <div id="settingsScreen" class="screen">
+        <div class="settings-container">
+            <h1>設定</h1>
+            <div class="settings-content">
+                <div class="setting-item">
+                    <label>音声効果:</label>
+                    <input type="checkbox" id="soundToggle" checked>
+                </div>
+                <div class="setting-item">
+                    <label>BGM:</label>
+                    <input type="checkbox" id="bgmToggle" checked>
+                </div>
+                <div class="setting-item">
+                    <label>難易度:</label>
+                    <select id="difficultySelect">
+                        <option value="normal">通常</option>
+                        <option value="hard">難しい</option>
+                    </select>
+                </div>
+                <div class="setting-item">
+                    <button class="btn btn-medium" onclick="gameManager.resetProgress()">進行状況をリセット</button>
+                </div>
+            </div>
+            <button class="btn btn-back" onclick="gameManager.backToMain()">戻る</button>
+        </div>
+    </div>
+
+    <!-- 説明画面 -->
+    <div id="aboutScreen" class="screen">
+        <div class="about-container">
+            <h1>ゲーム説明</h1>
+            <div class="about-content">
+                <h2>ゲームの概要</h2>
+                <p>このゲームはGBS理論に基づいたタイピングゲームです。</p>
+                <p>あなたはサラリーマンから社長へと昇進し、最終的に業界トップの田谷企業との競争に勝つことが目標です。</p>
+
+                <h2>遊び方</h2>
+                <ol>
+                    <li>ステージを選択してゲームを開始</li>
+                    <li>敵が現れて、セリフが表示されます</li>
+                    <li>敵のセリフをできるだけ正確に、素早くタイピング</li>
+                    <li>正確なキー入力数が敵へのダメージになります</li>
+                    <li>敵のHPを0にしてステージクリア</li>
+                </ol>
+
+                <h2>難易度</h2>
+                <p><strong>ステージ1-10:</strong> 自社での昇進、段階的に難易度が上昇</p>
+                <p><strong>ステージ11-19:</strong> 田谷企業の幹部たちとの競争、難易度がさらに上昇</p>
+                <p><strong>ステージ20:</strong> 最終決戦！田谷会長との対決</p>
+
+                <h2>ストーリー</h2>
+                <p>あなたの目標は以下の通りです：</p>
+                <ul>
+                    <li><strong>Stage 10:</strong> 社長昇進（正確入力270回以上）</li>
+                    <li><strong>Stage 20:</strong> 田谷企業との競争に勝利（正確入力1200回以上）</li>
+                </ul>
+            </div>
+            <button class="btn btn-back" onclick="gameManager.backToMain()">戻る</button>
+        </div>
+    </div>
+
+    <!-- スクリプト読み込み -->
+    <script src="js/stages.js"></script>
+    <script src="js/enemies.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/game.js"></script>
+
+    <script>
+        // ゲーム初期化
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loadingScreen').classList.remove('active');
+                document.getElementById('mainScreen').classList.add('active');
+                gameManager.init();
+            }, 1500);
+        });
+    </script>
+</body>
+</html>
